@@ -1,0 +1,70 @@
+#+title: Javascript Turtle API
+
+An adpatation of the Javascript Turtle class from [[https://turtletoy.net][TurtleToy]] designed to work with [[https://p5js.org][P5js]].
+The original code for this has been written by Reinder Nijhoff ([[https://twitter.com/ReinderNijhoff][@ReinderNijhoff]]).
+To imprt this add
+#+begin_example
+<script src="https://colormotor.github.io/generative_drawing_gold/code/turtle/turtle.js"></script>
+#+end_example
+to your ~index.html~ head.
+
+* Move and draw
+**** forward(distance) | fd(distance)
+Move the turtle forward by the specified distance, in the direction the turtle is headed.
+
+**** backward(distance) | bk(distance) | back(distance)
+Move the turtle backward by distance, opposite to the direction the turtle is headed. Do not change the turtle’s heading.
+**** right(angle) | rt(angle)
+Turn turtle right by angle units. (Units are by default degrees, but can be set via the degrees() and radians() functions.)
+**** left(angle) | lt(angle)
+Turn turtle left by angle units. (Units are by default degrees, but can be set via the degrees() and radians() functions.)
+**** goto(x, y = undefined) | setpos(x, y = undefined) | setposition(x, y = undefined)
+If y is undefined, x must be a pair of coordinates [x ,y] (e.g. as returned by pos()).
+Move turtle to an absolute position. If the pen is down, draw line. Do not change the turtle’s orientation.
+**** jump(x, y = undefined) | jmp(x, y = undefined)
+If y is undefined, x must be a pair of coordinates [x ,y] (e.g. as returned by pos()).
+Move turtle to an absolute position. Do not draw a line. Do not change the turtle’s orientation.
+**** setx(x)
+Set the turtle’s first coordinate to x, leave second coordinate unchanged.
+**** sety(y)
+Set the turtle’s second coordinate to y, leave first coordinate unchanged.
+**** setheading(to_angle) | seth(to_angle)
+Set the orientation of the turtle to to_angle.
+**** home()
+Move turtle to the origin – coordinates [0 ,0] – and set its heading to its start-orientation.
+**** circle(radius, extent = undefined, steps = undefined)
+Draw a circle with given radius. The center is radius units right of the turtle; extent – an angle – determines which part of the circle is drawn. If extent is not given, draw the entire circle. If extent is not a full circle, one endpoint of the arc is the current pen position. Draw the arc in clockwise direction if radius is positive, otherwise in counterclockwise direction. Finally the direction of the turtle is changed by the amount of extent.
+As the circle is approximated by an inscribed regular polygon, steps determines the number of steps to use. If not given, it will be calculated automatically.
+**** push()
+Saves the state of the turtle
+**** pop()
+Restores the state of the turtle
+
+* Tell Turtle’s state
+**** position() | pos()
+Return the turtle’s current location [x ,y].
+**** xcor() | x()
+Return the turtle’s x coordinate.
+**** ycor() | y()
+Return the turtle’s y coordinate.
+**** heading() | h()
+Return the turtle’s current heading.
+**** isdown()
+Return true if pen is down, false if it’s up.
+Setting and measurement
+**** degrees(fullcircle = 360.0)
+Set angle measurement units, i.e. set number of “degrees” for a full circle. Default value is 360 degrees.
+**** radians()
+Set the angle measurement units to radians. Equivalent to degrees(2 * Math.PI)
+* Pen control
+**** pendown() | pd() | down()
+Pull the pen down – drawing when moving.
+**** penup() | pu() | up()
+Pull the pen up – no drawing when moving.
+
+* General
+**** clone()
+Creates a clone of the turtle.
+
+* Customization
+Override the ~drawTurtleLine(x1, y1, x2, y2)~ function to customize drawing behavior. By default this draws a line between two points using p5s.
