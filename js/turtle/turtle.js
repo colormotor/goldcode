@@ -24,7 +24,7 @@ class Turtle {
     this._homex = this._x;
     this._homey = this._y;
     this.pendown();
-    this.store = false;
+    this.store = true;
     this.polygons = [];
     this.states = [];
   }
