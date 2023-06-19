@@ -3,12 +3,22 @@ AxiDrawClient = function(address) {
   this.stack = new TransformStack2d();
   this.debug = true;
   this.connected = false;
-  this.socket = new WebSocket(address);
-  
-  this.socket.onopen = () => {
-    console.log('WebSocket connection established.');
+
+  this.socket = io(address); // Replace <server-ip> with the IP address or hostname of the server
+
+  this.socket.on('connect', () => {
+    console.log('WebSocket connection established');
+    // Send a message to the server
+    this.socket.emit('message', 'Hello from client!');
     this.connected = true;
-  };
+});
+
+  // this.socket = new WebSocket(address);
+  
+  // this.socket.onopen = () => {
+  //   console.log('WebSocket connection established.');
+  //   this.connected = true;
+  // };
   
 
   // Block until 
@@ -82,7 +92,8 @@ AxiDrawClient = function(address) {
     for (let xy of P) {
       cmd += " " + xy[0] + " " + xy[1];
     }
-    this.socket.send("PATHCMD stroke " + P.length + cmd); 
+    //this.socket.send("PATHCMD stroke " + P.length + cmd); 
+    this.socket.emit("message", "PATHCMD stroke " + P.length + cmd); 
   }
 
   this.plot = (title=undefined) => {

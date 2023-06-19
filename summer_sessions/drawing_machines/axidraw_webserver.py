@@ -16,7 +16,7 @@ import sys
 import argparse
 args = argparse.ArgumentParser(description='Axidraw server')
 
-args.add_argument('--port', type=int, default=4000,
+args.add_argument('--port', type=int, default=9999,
                  help='''Server port number''')
 args.add_argument('--nx', type=int, default=3,
                  help='''Number of horizontal subdivisions for test plots''')
@@ -241,28 +241,88 @@ def pathcmd(*ary):
 
 import asyncio
 import websockets
+import os
 
-# create handler for each connection
-import asyncio
-from websockets.server import serve
+# # create handler for each connection
+# import asyncio
+# from websockets.server import serve
 
-async def echo(websocket):
-    async for message in websocket:
-        ary = message.split(" ")
-        print(ary)
-        print(ary[0])
+# async def echo(websocket):
+#     async for message in websocket:
+#         ary = message.split(" ")
+#         print(ary)
+#         print(ary[0])
 
-        if ary[0] == "PATHCMD":
-            pathcmd(*ary)
+#         if ary[0] == "PATHCMD":
+#             pathcmd(*ary)
 
-        print(message)
+#         print(message)
 
-async def main():
-    print('Starting server')
-    async with serve(echo, "localhost", cfg.port):
-        await asyncio.Future()  # run forever
+# async def main():
+#     print('Starting server')
+#     async with serve(echo, "0.0.0.0", cfg.port):
+#         await asyncio.Future()  # run forever
 
-asyncio.run(main())
+os.chdir(os.path.expanduser('~/Public'))
+#asyncio.run(main())
+
+# import socketio
+# import eventlet
+# from flask import Flask, send_from_directory
+
+# sio = socketio.Server()
+# app = Flask(__name__)
+
+# @app.route('/')
+# def index():
+#     return send_from_directory('Public', 'index.html')
+
+# @sio.on('message')
+# def handle_message(sid, message):
+#     ary = message.split(" ")
+#     print(ary)
+#     print(ary[0])
+
+#     if ary[0] == "PATHCMD":
+#         pathcmd(*ary)
+
+#     print(message)
+
+# @sio.event
+# def connect(sid, environ):
+#     print('WebSocket connection established:', sid)
+
+# app = socketio.Middleware(sio, app)
+# eventlet.wsgi.server(eventlet.listen(('', cfg.port)), app)
+
+import eventlet
+import socketio
+sio = socketio.Server()
+app = socketio.WSGIApp(sio, static_files={
+    '/': {'content_type': 'text/html', 'filename': 'index.html'}
+})
+
+@sio.event
+def connect(sid, environ):
+    print('connect ', sid)
+
+@sio.event
+def my_message(sid, message):
+    ary = message.split(" ")
+    print(ary)
+    print(ary[0])
+
+    if ary[0] == "PATHCMD":
+        pathcmd(*ary)
+
+    print(message)
+
+@sio.event
+def disconnect(sid):
+    print('disconnect ', sid)
+
+if __name__ == '__main__':
+    eventlet.wsgi.server(eventlet.listen(('', cfg.port)), app)
 
 
 # from aiohttp import web

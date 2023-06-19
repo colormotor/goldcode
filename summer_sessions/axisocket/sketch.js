@@ -3,7 +3,8 @@ var axi;
 var plotButton;
 
 async function preload() {
-  axi = new AxiDrawClient('ws://127.0.0.1:4000');
+  //axi = new AxiDrawClient('ws://10.100.10.201:9999');
+  axi = new AxiDrawClient('http://10.100.10.201:9999');
 }
 
 function setup() {
