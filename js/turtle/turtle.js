@@ -28,6 +28,7 @@ class Turtle {
     this.polygons = [];
     this.states = [];
   }
+  
   forward(e) {
     const x = this.x() + e * Math.cos(this._h);
     const y = this.y() + e * Math.sin(this._h);

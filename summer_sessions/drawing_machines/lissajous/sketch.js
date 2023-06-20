@@ -26,7 +26,7 @@ function setup() {
   strokeWeight(2);
   stroke(0);
   noFill();
-  background(128);
+  background(220);
   let n = 1200;
   delta = TWO_PI/4;
   let a = 7.0, b = 10.0;

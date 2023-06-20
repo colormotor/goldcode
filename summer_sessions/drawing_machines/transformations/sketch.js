@@ -25,7 +25,7 @@ function setup() {
   strokeWeight(2);
   stroke(0);
   noFill();
-  background(128);
+  background(220);
   axi.translate(width/2, height/2);
   let n = 50;
   for (let i = 0; i < n; i++) {

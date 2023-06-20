@@ -21,10 +21,11 @@ function setup() {
   strokeWeight(2);
   stroke(0);
   noFill();
-  background(128);
+  background(220);
   axi.translate(width/2, height/2);
   // Commands between beginHatch and endHatch will be filled with lines
-  axi.beginHatch(4, PI/4); // first parameter is distance, second is angle in radians
+  // first parameter is distance, second is angle in radians
+  axi.beginHatch(10, 0); 
   axi.rectangle(-100, -100, 200, 200);
   axi.circle(0, 0, 100, 35); 
   // "nesting" shapes between beginHatch and endHatch pairs

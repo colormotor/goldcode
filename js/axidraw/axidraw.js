@@ -55,6 +55,15 @@ AxiDrawClient = function(address) {
       vertex(p[0], p[1]); 
   }
   
+  this.addPolygons = (paths) => {
+    for (let P of paths) {
+      this.beginShape();
+      for (let p of P)
+        this.vertex(p[0], p[1]);
+      this.endShape();
+    }
+  }
+
   this.endShape = (close=0) => {
     endShape(close);
     
