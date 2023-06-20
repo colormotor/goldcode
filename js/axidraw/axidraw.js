@@ -150,6 +150,8 @@ AxiDrawClient = function(address) {
       this.socket.send("PATHCMD title " + title);
     this.socket.send("PATHCMD drawing_start");
     for (let P of this.paths){
+      if (P.length < 2)
+        continue;
       this.sendPath(P);
       this.socket.send("PATHCMD drawing_end");
     }
