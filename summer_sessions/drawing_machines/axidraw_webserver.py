@@ -232,8 +232,8 @@ def pathcmd(*ary):
     # elif ary[1] == 'home':
     #     device.home()
     #     print('received home')
-    # elif ary[1] == 'title':
-    #     set_title(' '.join(ary[2:]))
+    elif ary[1] == 'title':
+        set_title(' '.join(ary[2:]))
     else:
         print("strange PATHCMD: " + ary[1])
 
@@ -243,29 +243,32 @@ import asyncio
 import websockets
 import os
 
-# # create handler for each connection
-# import asyncio
-# from websockets.server import serve
+# os.chdir(os.path.expanduser('~/Public'))
 
-# async def echo(websocket):
-#     async for message in websocket:
-#         ary = message.split(" ")
-#         print(ary)
-#         print(ary[0])
+# # # create handler for each connection
+import asyncio
+from websockets.server import serve
 
-#         if ary[0] == "PATHCMD":
-#             pathcmd(*ary)
+async def echo(websocket):
+    async for message in websocket:
+        ary = message.split(" ")
+        print(ary)
+        print(ary[0])
 
-#         print(message)
+        if ary[0] == "PATHCMD":
+            pathcmd(*ary)
 
-# async def main():
-#     print('Starting server')
-#     async with serve(echo, "0.0.0.0", cfg.port):
-#         await asyncio.Future()  # run forever
+        print(message)
 
-os.chdir(os.path.expanduser('~/Public'))
-#asyncio.run(main())
+async def main():
+    print('Starting server')
+    #async with serve(echo, "localhost", cfg.port):
+    async with serve(echo, "0.0.0.0", cfg.port):
+        await asyncio.Future()  # run forever
 
+asyncio.run(main())
+
+## FLASK
 # import socketio
 # import eventlet
 # from flask import Flask, send_from_directory
@@ -275,7 +278,13 @@ os.chdir(os.path.expanduser('~/Public'))
 
 # @app.route('/')
 # def index():
-#     return send_from_directory('Public', 'index.html')
+#     # Your code here
+#     response = jsonify({'your': 'data'})
+#     response.headers.add('Access-Control-Allow-Origin', '*')
+#     return response
+
+# # def index():
+# #     return send_from_directory('Public', 'index.html')
 
 # @sio.on('message')
 # def handle_message(sid, message):
@@ -295,9 +304,46 @@ os.chdir(os.path.expanduser('~/Public'))
 # app = socketio.Middleware(sio, app)
 # eventlet.wsgi.server(eventlet.listen(('', cfg.port)), app)
 
+## 8080 server
+# from aiohttp import web
+# import socketio
+
+# ## creates a new Async Socket IO Server
+# sio = socketio.AsyncServer(cors_allowed_origins=['*'])
+# ## Creates a new Aiohttp Web Application
+# app = web.Application()
+# # Binds our Socket.IO server to our Web App
+# ## instance
+# sio.attach(app)
+
+# ## we can define aiohttp endpoints just as we normally
+# ## would with no change
+# async def index(request):
+#     return web.Response(text='Hello world', content_type='text/html')
+
+# ## If we wanted to create a new websocket endpoint,
+# ## use this decorator, passing in the name of the
+# ## event we wish to listen out for
+# @sio.on('message')
+# async def print_message(sid, message):
+#     ## When we receive a new event of type
+#     ## 'message' through a socket.io connection
+#     ## we print the socket ID and the message
+#     print("Socket ID: " , sid)
+#     print(message)
+
+# ## We bind our aiohttp endpoint to our app
+# ## router
+# app.router.add_get('/', index)
+
+# ## We kick off our server
+# if __name__ == '__main__':
+#     web.run_app(app)
+
+## Eventlet ?
 import eventlet
 import socketio
-sio = socketio.Server()
+sio = socketio.Server(cors_allowed_origins='*')
 app = socketio.WSGIApp(sio, static_files={
     '/': {'content_type': 'text/html', 'filename': 'index.html'}
 })
@@ -324,37 +370,6 @@ def disconnect(sid):
 if __name__ == '__main__':
     eventlet.wsgi.server(eventlet.listen(('', cfg.port)), app)
 
-
-# from aiohttp import web
-# import socketio
-
-# ## creates a new Async Socket IO Server
-# sio = socketio.AsyncServer()
-# ## Creates a new Aiohttp Web Application
-# app = web.Application()
-# # Binds our Socket.IO server to our Web App
-# ## instance
-# sio.attach(app)
-
-# @sio.event
-# def my_event(sid, data):
-#     print('recv event')
-#     print(sid)
-#     print(data)
-
-
-
-# import socket,os
-# import websocket
-# sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-# print('AxiDraw server, binding socket to port %d'%(cfg.port))
-# sock.bind(('', cfg.port))  # CHANGE PORT NUMBER HERE!
-# sock.listen(5)
-## We kick off our server
-# if __name__ == '__main__':
-#     web.run_app(app)
-
-# print('entering loop')
 
 # while True:
 #     connection,address = sock.accept()
