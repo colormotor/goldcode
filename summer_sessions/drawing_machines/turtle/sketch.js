@@ -8,7 +8,7 @@ var plotButton;
 
 function preload() {
   // Here we setup the axidraw client connection
-  let address = 'ws://471f-2a02-c7c-3891-7c00-a899-98ae-6d93-5334.ngrok-free.app'
+  let address = 'ws://c924-158-223-165-74.ngrok-free.app'
   //let address = 'ws://10.100.10.201:9999'
   axi = new AxiDrawClient(address);
 }
