@@ -46,11 +46,11 @@ AxiDrawClient = function(address) {
   
   this.vertex = (x, y) => {
     p = this.stack.transform([x, y]);
-    this.lastpath().push(p);
+    this.lastpath().push([...p]);
     if (this.debug)
       vertex(x, y);
     else
-      vertex(p[0] + Math.random()*10, p[1] + Math.random()*10); 
+      vertex(p[0], p[1]); // + Math.random()*10, p[1] + Math.random()*10); 
   }
   
   this.addPolygons = (paths) => {
@@ -65,16 +65,17 @@ AxiDrawClient = function(address) {
   this.endShape = (close=0) => {
     endShape(close);
     
+    
     // Add path before closing
     if (this.hatchParams.active) {
       this.hatchPaths.push(clonePoly(this.lastpath()));
     }
-    
+
     // Close actual polygon
     if (close==CLOSE) {
       let p = this.lastpath()[0];
       this.vertex(p[0], p[1]);
-    }    
+    }  
   }
 
   this.beginHatch = (dist, angle=0) => {
@@ -90,7 +91,7 @@ AxiDrawClient = function(address) {
       for (let h of hatches) {
         print(h);
         print(h.length);
-        this.paths.push(h);
+        this.paths.push(clonePoly(h));
         line(h[0][0], h[0][1], h[1][0], h[1][1]);
       }
     }
@@ -136,7 +137,7 @@ AxiDrawClient = function(address) {
       // print("PATHCMD stroke " + P.length + cmd);
       this.socket.emit("message", "PATHCMD stroke " + P.length + cmd); 
     }else{
-      // print("PATHCMD stroke " + P.length + cmd);
+      print("PATHCMD stroke " + P.length + cmd);
       this.socket.send("PATHCMD stroke " + P.length + cmd); 
     }
   }
@@ -157,7 +158,6 @@ AxiDrawClient = function(address) {
         continue;
       this.sendPath(P);
     }
-
     this.socket.send("PATHCMD drawing_end");
   }
 
