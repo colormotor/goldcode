@@ -44,9 +44,12 @@ AxiDrawClient = function(address) {
     beginShape();
   }
   
-  this.vertex = (x, y) => {
-    p = this.stack.transform([x, y]);
-    this.lastpath().push([...p]);
+  this.vertex = (x, y, applyTransform=true) => {
+    if (applyTransform)
+      p = this.stack.transform([x, y]);
+    else
+      p = [x, y];
+    this.lastpath().push([p[0], p[1]]);
     if (this.debug)
       vertex(x, y);
     else
@@ -63,19 +66,20 @@ AxiDrawClient = function(address) {
   }
 
   this.endShape = (close=0) => {
+
     endShape(close);
-    
-    
+    let P = clonePoly(this.lastpath());
     // Add path before closing
     if (this.hatchParams.active) {
-      this.hatchPaths.push(clonePoly(this.lastpath()));
+      this.hatchPaths.push(P);
     }
-
     // Close actual polygon
     if (close==CLOSE) {
-      let p = this.lastpath()[0];
-      this.vertex(p[0], p[1]);
+      let p = P[0];
+      this.vertex(p[0], p[1], false);
     }  
+
+    
   }
 
   this.beginHatch = (dist, angle=0) => {
@@ -89,8 +93,6 @@ AxiDrawClient = function(address) {
     if (this.hatchPaths.length) {
       let hatches = hatch(this.hatchPaths, this.hatchParams.dist, this.hatchParams.angle);
       for (let h of hatches) {
-        print(h);
-        print(h.length);
         this.paths.push(clonePoly(h));
         line(h[0][0], h[0][1], h[1][0], h[1][1]);
       }
@@ -137,7 +139,7 @@ AxiDrawClient = function(address) {
       // print("PATHCMD stroke " + P.length + cmd);
       this.socket.emit("message", "PATHCMD stroke " + P.length + cmd); 
     }else{
-      print("PATHCMD stroke " + P.length + cmd);
+      //print("PATHCMD stroke " + P.length + cmd);
       this.socket.send("PATHCMD stroke " + P.length + cmd); 
     }
   }
@@ -153,7 +155,6 @@ AxiDrawClient = function(address) {
     //   this.socket.send("PATHCMD title " + title);
     this.socket.send("PATHCMD drawing_start");
     for (let P of this.paths){
-      print(P.length);
       if (P.length < 2)
         continue;
       this.sendPath(P);
@@ -291,7 +292,7 @@ function boundingBox(S, padding = 0) {
 }
 
 const clonePoly = (P) => {
-  return P.map(p => [...p]);
+  return P.map(p => [p[0], p[1]]);
 }
 
 const compare_nums = (a, b) => {

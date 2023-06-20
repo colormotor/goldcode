@@ -8,9 +8,12 @@
 # For details and instructions, see https://lurkertech.com/axiserver
 #
 # some simple additions by Daniel Berio
+#%%
 
 import axi
 import sys
+from polygonsoup import plut
+import numpy as np
 
 # DB: added arguments
 import argparse
@@ -30,7 +33,7 @@ args.add_argument('--y_up', type=bool, default=False,
                  help='''If true this indicates that the input drawing has origin in the bottom left''')
 args.add_argument('--start_index', type=int, default=0,
                  help='''Default start index''')
-args.add_argument('--format', type=str, default='none',
+args.add_argument('--format', type=str, default='A4',
                  help='''Paper format (A4,A5,A3)''')
 args.add_argument('--plt', type=bool, default=False,
                  help='''If True use matplotlib debug view instead''')
@@ -166,15 +169,17 @@ def stroke_end():
 
 def drawing_start():
     print("DRAWING START")
-    global paths, busy
+    global paths
+    global busy
     paths = []
-    busy = True
-
+    
 
 # DB: Note, addition here. We want to be able to draw with specific coordinates (in inches)
 # which can be done by using the "drawing_end_raw" command
 def drawing_end(raw=False):
-    global paths, title, busy
+    global paths
+    global title
+
     d = axi.Drawing(paths)
     text_pos = (PADDING, V3_SIZEX-PADDING)
     if not raw:
@@ -185,21 +190,24 @@ def drawing_end(raw=False):
         text_pos = (POSX*CELLSIZEX, (POSY+1)*CELLSIZEY-PADDING)
         nextpos()
 
-    if title:
-        font = axi.Font(axi.FUTURAL, 7.5) #
-        dtext = font.text(title)
-        dtext = dtext.translate(*text_pos)
-        d.add(dtext)
+    # if title:
+    #     font = axi.Font(axi.FUTURAL, 7.5) #
+    #     dtext = font.text(title)
+    #     dtext = dtext.translate(*text_pos)
+    #     d.add(dtext)
 
-    axi.draw(d)
-
+    # axi.draw(d)
+    plut.figure((10, 10))
+    for P in paths:
+        P = np.array(P)
+        plut.stroke(P, 'k')
+    plut.show(axis=True)
     title = '' # Reset title
-
+    # plut
     print("DRAWING END")
     print("")
 
 def pathcmd(*ary):
-    print(ary)
     if ary[1] == "drawing_start":
         if (busy):
             print("Received drawing_start while busy")
@@ -220,18 +228,18 @@ def pathcmd(*ary):
         for i in range(int(npoints)):
             x = float(ary[2*i+3])
             y = float(ary[2*i+4])
-            print("pointx: " + str(x) + "pointy: " + str(y))
+            # print("pointx: " + str(x) + "pointy: " + str(y))
             stroke_addpoint(x, y)
         stroke_end()
-    # elif ary[1] == 'pen_up':
-    #     device.pen_up()
-    #     print('received pen up')
-    # elif ary[1] == 'pen_down':
-    #     device.pen_down()
-    #     print('received pen down')
-    # elif ary[1] == 'home':
-    #     device.home()
-    #     print('received home')
+    elif ary[1] == 'pen_up':
+        device.pen_up()
+        print('received pen up')
+    elif ary[1] == 'pen_down':
+        device.pen_down()
+        print('received pen down')
+    elif ary[1] == 'home':
+        device.home()
+        print('received home')
     elif ary[1] == 'title':
         set_title(' '.join(ary[2:]))
     else:
@@ -253,12 +261,11 @@ async def echo(websocket):
     async for message in websocket:
         ary = message.split(" ")
         print(ary)
-        print(ary[0])
 
         if ary[0] == "PATHCMD":
             pathcmd(*ary)
 
-        print(message)
+        
 
 async def main():
     print('Starting server')
@@ -341,34 +348,35 @@ asyncio.run(main())
 #     web.run_app(app)
 
 ## Eventlet ?
-import eventlet
-import socketio
-sio = socketio.Server(cors_allowed_origins='*')
-app = socketio.WSGIApp(sio, static_files={
-    '/': {'content_type': 'text/html', 'filename': 'index.html'}
-})
+# import eventlet
+# import socketio
+# sio = socketio.Server(cors_allowed_origins='*')
+# app = socketio.WSGIApp(sio, static_files={
+#     '/': {'content_type': 'text/html', 'filename': 'index.html'}
+# })
 
-@sio.event
-def connect(sid, environ):
-    print('connect ', sid)
+# @sio.event
+# def connect(sid, environ):
+#     print('connect ', sid)
 
-@sio.event
-def my_message(sid, message):
-    ary = message.split(" ")
-    print(ary)
-    print(ary[0])
+# @sio.event
+# def my_message(sid, message):
+#     ary = message.split(" ")
+#     print("Received message")
+#     print(ary)
+#     print(ary[0])
 
-    if ary[0] == "PATHCMD":
-        pathcmd(*ary)
+#     if ary[0] == "PATHCMD":
+#         pathcmd(*ary)
 
-    print(message)
+#     print(message)
 
-@sio.event
-def disconnect(sid):
-    print('disconnect ', sid)
+# @sio.event
+# def disconnect(sid):
+#     print('disconnect ', sid)
 
-if __name__ == '__main__':
-    eventlet.wsgi.server(eventlet.listen(('', cfg.port)), app)
+# if __name__ == '__main__':
+#     eventlet.wsgi.server(eventlet.listen(('', cfg.port)), app)
 
 
 # while True:
