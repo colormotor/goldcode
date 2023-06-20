@@ -40,9 +40,7 @@ AxiDrawClient = function(address) {
   }
   
   this.beginShape = () => {
-    if (!this.paths.length || 
-         this.lastpath().length)
-      this.paths.push([]);
+    this.paths.push([]);
     beginShape();
   }
   
@@ -52,7 +50,7 @@ AxiDrawClient = function(address) {
     if (this.debug)
       vertex(x, y);
     else
-      vertex(p[0], p[1]); 
+      vertex(p[0] + Math.random()*10, p[1] + Math.random()*10); 
   }
   
   this.addPolygons = (paths) => {
@@ -90,6 +88,8 @@ AxiDrawClient = function(address) {
     if (this.hatchPaths.length) {
       let hatches = hatch(this.hatchPaths, this.hatchParams.dist, this.hatchParams.angle);
       for (let h of hatches) {
+        print(h);
+        print(h.length);
         this.paths.push(h);
         line(h[0][0], h[0][1], h[1][0], h[1][1]);
       }
@@ -133,8 +133,10 @@ AxiDrawClient = function(address) {
       cmd += " " + xy[0] + " " + xy[1];
     }
     if (this.useio) {
+      // print("PATHCMD stroke " + P.length + cmd);
       this.socket.emit("message", "PATHCMD stroke " + P.length + cmd); 
     }else{
+      // print("PATHCMD stroke " + P.length + cmd);
       this.socket.send("PATHCMD stroke " + P.length + cmd); 
     }
   }
@@ -146,15 +148,17 @@ AxiDrawClient = function(address) {
       return;
     }
     print("Sending");
-    if (title)
-      this.socket.send("PATHCMD title " + title);
+    // if (title)
+    //   this.socket.send("PATHCMD title " + title);
     this.socket.send("PATHCMD drawing_start");
     for (let P of this.paths){
+      print(P.length);
       if (P.length < 2)
         continue;
       this.sendPath(P);
-      this.socket.send("PATHCMD drawing_end");
     }
+
+    this.socket.send("PATHCMD drawing_end");
   }
 
   this.rotate = (theta) => {
