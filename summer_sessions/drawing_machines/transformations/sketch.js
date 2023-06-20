@@ -17,7 +17,7 @@ function preload() {
 }
 
 function plot() {
-  axi.plot("Hello");
+  axi.plot(); 
 }
 
 function setup() {
@@ -41,7 +41,7 @@ function setup() {
   }
 
   button = createButton('plot');
-  button.mousePressed(axi.plot);
+  button.mousePressed(plot);
 }
 
 function draw() {

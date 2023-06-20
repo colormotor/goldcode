@@ -18,7 +18,7 @@ function preload() {
 }
 
 function plot() {
-  axi.plot("Hello");
+  axi.plot("Lissa"); // put your name or a text here
 }
 
 function setup() {
@@ -44,7 +44,7 @@ function setup() {
   axi.endShape();
 
   button = createButton('plot');
-  button.mousePressed(axi.plot);
+  button.mousePressed(plot);
 }
 
 function draw() {

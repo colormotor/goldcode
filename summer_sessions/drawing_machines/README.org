@@ -1,0 +1,172 @@
+#+title: Summer session: Drawing machines and robots
+
+* Setup your p5js sketch
+
+Download or clone (preferably, if you are familiar with git) this repository from [[https://www.github.com/colormotor/goldcode]].
+
+To experiment with the examples, duplicate each example folder and place it in a location of choice.
+*Try not to modify the code in this repository as it will make editing or updating code more difficult!*
+
+You will need to run the sketches locally, so preferably use an editor with live editing capailities such as VS Code.
+
+** Selectting the correct server address
+AxiDraw drawing happens over the network. A computer connected to the machine runs a server over the local network and waits from commands sent by a sketch.
+To send a drawing you will need to make sure that this line contains the IP of the computer connected to the AxiDraw:
+#+begin_src javascript
+axi = new AxiDrawClient('ws://10.100.10.201:9999');
+#+end_src
+
+In the given examples, plotting won't happen unless you click the "plot" button.
+
+** AxiDraw server
+:PROPERTIES:
+:CUSTOM_ID: axidraw-server
+:END:
+The server is based on a script by
+[[https://lurkertech.com/3daxi/][Chris Pirazzi and Paul Haeberli]] ,
+which handles remote communication with the AxiDraw. With this setup,
+one computer acts as a /server/, has the
+[[https://github.com/fogleman/axi][axi]] Python package installed and is
+physically connected to the plotter. Then, all computers on the same
+local network can act as /clients/ and send drawing commands to the
+server, which sends those commands to the AxiDraw.One nice option of
+this script is that it can subdivide the page in multiple "cells", which
+are very convenient when preparing test drawings. We will use a slightly
+modified version of this server, to allow multiple users to share the
+axidraw. We will use a modified version of this script.
+
+
+* Links
+:PROPERTIES:
+:CUSTOM_ID: links
+:END:
+** Axidraw related links
+:PROPERTIES:
+:CUSTOM_ID: axidraw-related-links
+:END:
+- [[https://cdn.evilmadscientist.com/wiki/axidraw/software/AxiDraw_V37r1.pdf][AxiDraw
+  V3 manual]]
+- [[https://github.com/fogleman/axi][AxiDraw control Python package]]
+- [[https://lurkertech.com/axiserver/][AxiDraw Server]]
+- [[https://lurkertech.com/3daxi/][Smooth pen up/down movement hack]]
+  extension to smoothly control pen pressure.
+
+** Other languages, tools useful for AxiDraw
+:PROPERTIES:
+:CUSTOM_ID: other-languages-tools-useful-for-axidraw
+:END:
+- [[https://calinon.ch/codes.htm][Pbdlib]] Sylvain Calinon has open
+  source code that can be easily adapted to generate drawings with
+  AxiDraw.
+- [[https://processing.org][processing]] is a wrapper around Java
+  intended to facilitate "sketching" of graphic ideas.
+  - [[https://www.generativehut.com/post/axidraw-processing]] This is a
+    link explains how to interface processing with AxiDraw.
+- [[https://p5js.org]] a JavaScript version of Processing.
+- [[http://paperjs.org]] a powerful javascript library for 2d vector
+  graphics.
+- [[https://turtletoy.net]] a online JavaScript library and coding
+  sandbox with many examples that are extremely plotter-friendly.
+- [[https://github.com/fogleman/ln]] a line-based 3d renderer written in
+  Go. Very powerful, based on signed distance fields.
+- [[http://hackingforartists.com]] many more links to explore that are
+  not listed here.
+
+** Python, useful packages (for generating drawings etc.)
+:PROPERTIES:
+:CUSTOM_ID: python-useful-packages-for-generating-drawings-etc.
+:END:
+- [[https://shapely.readthedocs.io/en/stable/manual.html][Shapely]] Good
+  library for manipulating gemetry, originally aimed at GIS
+  (Geographical Information Systems) but can be useful for art-related
+  applications as well.
+- [[https://networkx.github.io][NetworkX]] Nice Graph library for
+  Python. Includes many
+  [[https://networkx.org/documentation/stable/reference/algorithms/index.html][algorithms]]
+  that can be used to generate graphics.
+- [[https://www.scipy.org][SciPy]] Generally useful as an addition to
+  NumPy. Has wrappers to generate
+  [[https://en.wikipedia.org/wiki/Voronoi_diagram][Voronoi diagrams]],
+  [[https://en.wikipedia.org/wiki/Delaunay_triangulation][Delaunay
+  triangulations]] and a useful
+  [[https://docs.scipy.org/doc/scipy/reference/generated/scipy.interpolate.splrep.html][smoothing
+  spline implementation]].
+- [[https://vtk.org][The visualization toolkit (VTK)]] Powerful geometry
+  processing library, that can be used in combination with the
+  [[https://github.com/colormotor/polygonsoup/tree/main/py][polygonsoup]]
+  package.
+- [[https://github.com/fonttools/fonttools][fonttools]] Useful to load
+  TrueType font files
+- [[https://github.com/scikit-geometry/scikit-geometry][scikit-geometry]]
+  Provides a Python interface for the the powerful
+  [[https://www.cgal.org][Computational Geometry Algorithms Library
+  (CGAL)]].
+- [[https://opencv.org][OpenCV]] For image processing, has Python
+  bindings that are easy to integrate with NumPy.
+- [[https://pycairo.readthedocs.io/en/latest/][PyCairo]] For 2d vector
+  graphics.
+
+** Curves and surfaces
+:PROPERTIES:
+:CUSTOM_ID: curves-and-surfaces
+:END:
+- [[http://paulbourke.net/geometry]] Paul Bourkes' website. Full of
+  formulas/code examples
+- Euler spirals (or Cornu Spirals, or clothoids), a presentation by Raph
+  Levien
+  [[https://www2.eecs.berkeley.edu/Pubs/TechRpts/2008/EECS-2008-111.pdf]].
+  Can be generated with the Fresnel integrals, which are implemented in
+  [[https://docs.scipy.org/doc/scipy/reference/generated/scipy.special.fresnel.html][SciPy]]
+- Online primer/book on Bézier curves:
+  [[https://pomax.github.io/bezierinfo/]]
+
+** Graphics/Geometry
+:PROPERTIES:
+:CUSTOM_ID: graphicsgeometry
+:END:
+- [[https://www.jasondavies.com]] has a collection of nice Javasript
+  demos with computational geometry algorithms.
+- [[http://jeffe.cs.illinois.edu/compgeom/code.html]] a nice collection
+  of computational geometry codes in C/C++.
+- A tutorial on Hexagonal grids:
+  [[http://www-cs-students.stanford.edu/~amitp/Articles/HexLOS.html]]
+- [[https://www.glassner.com/writing/tech-notes/][Tech notes]] by Andrew
+  Glassner
+- [[https://cs.nyu.edu/~perlin/][Ken Perlin's home page]] has many nice
+  interactive examples (beautifully) written in Java.
+- [[http://hackingforartists.com]] A resource with different links that
+  can be handy for generating drawings.
+
+** Contemporary artists using AxiDraw, plotters, robots
+:PROPERTIES:
+:CUSTOM_ID: contemporary-artists-using-axidraw-plotters-robots
+:END:
+- [[https://www.michaelfogleman.com][Michael Fogleman]] who wrote the
+  Axi library.
+- [[https://joanielemercier.com][Joanie Lemercier]], video/media artist.
+- [[https://twitter.com/wblut][Frederik Vanhoutte]], who also has some
+  useful online code [[https://github.com/wblut]].
+- [[http://juerglehni.com][Jurg Lehni]] font-designer, author of
+  Paper.js and builder of some really nice custom built plotters.
+- [[https://patricktresset.com/new/][Patrick Tresset]] is a contemporary
+  artist that works with low-cost robot arms and plotters.
+- I have built and worked with a number of plotters (custom built an
+  non): https://www.enist.org/post/drawing_machines/.
+
+** Early computer art and artists using plotters (for inspiration)
+:PROPERTIES:
+:CUSTOM_ID: early-computer-art-and-artists-using-plotters-for-inspiration
+:END:
+- [[http://www.verostko.com/algorist.html][The Algorists]], article by
+  Roman Verotsko
+- [[http://computer-arts-society.com/cas50-collection]]
+- [[https://www.atariarchives.org/artist/][Artist and Computer digital
+  book]]
+- [[https://www.emohr.com][Manfred Mohr]]
+- [[http://www.verostko.com][Roman Verotsko]]
+- [[http://cyberneticserendipity.net][Cybernetic serendipity]]
+  exhibition.
+- [[http://www.vam.ac.uk/content/articles/a/computer-art-history/][Short
+  article on computer art history]]
+- [[http://collections.vam.ac.uk/search/?id_technique=x43893][Plotter
+  drawings at the V&A]]

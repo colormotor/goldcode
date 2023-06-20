@@ -13,7 +13,7 @@ function preload() {
 }
 
 function plot() {
-  axi.plot("Hello");
+  axi.plot("Hatch"); // put your name or a text here
 }
 
 function setup() {
@@ -33,7 +33,7 @@ function setup() {
   axi.endHatch();
 
   button = createButton('plot');
-  button.mousePressed(axi.plot);
+  button.mousePressed(plot);
 }
 
 function draw() {
