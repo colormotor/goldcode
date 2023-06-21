@@ -180,6 +180,10 @@ def drawing_end(raw=False):
     global paths
     global title
 
+    if not paths:
+        print("No paths to draw, bailing")
+        return
+
     d = axi.Drawing(paths)
     text_pos = (PADDING, V3_SIZEX-PADDING)
     if not raw:
