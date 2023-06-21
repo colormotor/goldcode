@@ -14,7 +14,7 @@ function turtleLine(ax, ay, bx, by) {
 }
 
 class Turtle {
-  constructor(x, y) {
+  constructor(x, y, draw=false) {
     this._x = width/2;
     this._y = height/2;
     this._h = 0;
@@ -25,8 +25,9 @@ class Turtle {
     this._homey = this._y;
     this.pendown();
     this.store = true;
-    this.polygons = [];
+    this.paths = [];
     this.states = [];
+    this.draw = draw;
   }
   
   forward(e) {
@@ -46,8 +47,9 @@ class Turtle {
   pendown() {
     if (!this._pen) {
       // new path
-      if (this.store)
-        this.polygons.push([[this._x, this._y]]);
+      if (this.store) {
+        this.paths.push([[this._x, this._y]]);
+      }
     }
     this._pen = true;
   }
@@ -62,9 +64,15 @@ class Turtle {
   }
   goto (x, y) {
     if(this._pen) {
-      if (this.store)
-        this.polygons.push([[x, y]]);
-      turtleLine(this._x, this._y, x, y);
+      if (this.store){
+        if (!this.paths.length){
+          this.paths.push([[this._x, this._y]]);
+        }else{
+          this.paths[this.paths.length-1].push([x, y]);
+        }
+      }
+      if (this.draw)
+        turtleLine(this._x, this._y, x, y);
     }
     if (Array.isArray(x)) {
       this._x = x[0];
