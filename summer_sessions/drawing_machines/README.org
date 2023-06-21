@@ -2,26 +2,43 @@
 
 * Setup your p5js sketch
 
-Download or clone (preferably, if you are familiar with git) this repository from [[https://www.github.com/colormotor/goldcode]].
+Download or clone (preferably, if you are familiar with git) this repository
+from [[https://www.github.com/colormotor/goldcode]].
 
-To experiment with the examples, duplicate each example folder and place it in a location of choice.
-*Try not to modify the code in this repository as it will make editing or updating code more difficult!*
+To experiment with the examples, duplicate each example folder and place it in a
+location of choice. *Try not to modify the code in this repository as it will
+make editing or updating code more difficult!*
 
-You will need to run the sketches locally, so preferably use an editor with live editing capailities such as VS Code.
+You will need to run the sketches locally, so preferably use an editor with live
+editing capailities such as VS Code.
+
+** ~AxiDrawClient~ API overview
+The main difference from a traditional p5js sketch is that all drawing that can
+be sent to the plotter is done through the ~AxiDrawClient~ object. The object is
+initialized in the ~preload~ function and it is given a websocket address where
+a server controlling the AxiDraw is running.
+
+Functionalities such as alpha blending, colors etc are obviously not available
+with the plotter, so drawing is done with calls similar to the ones typically
+used in p5js but referring to a previously instanced ~AxiDrawClient~ object.
+
 
 ** Selectting the correct server address
-AxiDraw drawing happens over the network. A computer connected to the machine runs a server over the local network and waits from commands sent by a sketch.
-To send a drawing you will need to make sure that this line contains the IP of the computer connected to the AxiDraw:
+AxiDraw drawing happens over the network. A computer connected to the machine
+runs a server over the local network and waits from commands sent by a sketch.
+To send a drawing you will need to make sure that this line contains the IP of
+the computer connected to the AxiDraw:
 #+begin_src javascript
 axi = new AxiDrawClient('ws://10.100.10.201:9999');
 #+end_src
 
 In the given examples, plotting won't happen unless you click the "plot" button.
 
-** AxiDraw server
+** AxiDraw webserver
 :PROPERTIES:
 :CUSTOM_ID: axidraw-server
 :END:
+To run execute ~python axidraw_webserver.py~ from the commandline.
 The server is based on a script by
 [[https://lurkertech.com/3daxi/][Chris Pirazzi and Paul Haeberli]] ,
 which handles remote communication with the AxiDraw. With this setup,
